@@ -116,6 +116,10 @@ contract WalletCore is
         Call[] calldata calls,
         Session calldata session
     ) external onlyValidSession(session, calls) {
+        address storageAddr = address(getMainStorage());
+        for (uint256 i; i < calls.length; i++) {
+            require(calls[i].target != address(this) && calls[i].target != storageAddr, "Forbidden");
+        }
         _batchCall(calls);
     }
 

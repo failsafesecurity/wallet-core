@@ -30,14 +30,12 @@ abstract contract ExecutorLogic is IExecutor, WalletCoreBase {
     modifier onlyValidSession(Session calldata session, Call[] calldata calls) {
         validateSession(session);
 
-        bytes memory ret;
-
-        if (session.preHook.length >= 20)
-            ret = IHook(address(bytes20(session.preHook[:20]))).preCheck(
-                calls,
-                session.preHook[20:],
-                msg.sender
-            );
+        require(session.preHook.length >= 20, "PreHook mandatory");
+        bytes memory ret = IHook(address(bytes20(session.preHook[:20]))).preCheck(
+            calls,
+            session.preHook[20:],
+            msg.sender
+        );
 
         _;
 
